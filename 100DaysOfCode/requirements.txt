@@ -1,1 +1,2 @@
 random-word
+replit==3.2.5
