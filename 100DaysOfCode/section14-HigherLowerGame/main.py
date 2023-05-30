@@ -1,8 +1,7 @@
-# loop start
-
-
 from random import choice as random_choice
 from game_data import data
+import art
+import os
 
 list_used = []
 def newOption ():
@@ -29,21 +28,28 @@ def result(a_option, b_option):
     else:
         return 'b'
 
+clear = lambda: os.system('clear')
+
 # random in list, show option A var a_option.
 a_option = newOption()
 
 # random in list, show B option var b_option. Can't be A.
 b_option = newOption()
 
+# loop start
 score = 0
 playing = True
 while playing:
+    clear()
+    print(art.logo)
+
     print(f"Compare A: {a_option['name']}, a {a_option['description']}, from {a_option['country']}.")
+    print(art.vs)
     print(f"Against B: {b_option['name']}, a {b_option['description']}, from {b_option['country']}.")
 
     # show option to user choose. Save it in var user_option.
     choice = input("Who has more follower? Type 'A' or 'B': ").lower()
-    print(f'You choose: {choice}')
+    # print(f'You choose: {choice}')
 
     # compare the options, show who won. funcao winner().
     outcome = result(a_option, b_option)
@@ -57,8 +63,9 @@ while playing:
             a_option = b_option
             b_option = newOption()
     else:
-        print(score)
-        print('game over')
+        clear()
+        print(art.logo)
+        print(f"Sorry, that's wrong. Final score: {score}")
         playing = False
 
 
