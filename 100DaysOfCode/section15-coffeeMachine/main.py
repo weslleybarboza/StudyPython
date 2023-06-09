@@ -1,9 +1,10 @@
 import menu as m
 import resouces
+from replit import clear
 
 
 def menu_status(item_menu):
-    if m.MENU[item]['available']:
+    if menu_available[item]['available']:
         return "Available"
     else:
         return "Unavailable"
@@ -26,24 +27,60 @@ def coins_amount():
     return round(amount, 2)
 
 
+def check_money_enough(choice_item, total_coins):
+    if choice_item["cost"] <= total_coins:
+        return True
+    else:
+        return False
+
+
+def update_resource(choice_item):
+    """Decrease the resource available for the next drinks."""
+    for ingredient in choice_item["ingredients"]:
+        resouces_available[ingredient] -= choice_item["ingredients"][ingredient]
+    return
+
+
+def update_menu_status():
+    """Check if item of menu has resource enough to sell the drink."""
+    for product in menu_available.keys():
+        for item in menu_available[product]["ingredients"]:
+            if resouces_available[item] < menu_available[product]["ingredients"][item]:
+                menu_available[product]["available"] = False
+
+
+def check_change(amount_paid, choise):
+    if choise["cost"] < amount_paid:
+        print(f"Please, get your change: $ {amount_paid - choise['cost']}")
+
+
+def update_sell_balance(product_name):
+    if product_name in sell_balance:
+        sell_balance[product_name] += 1
+    else:
+        sell_balance[product_name] = 1
+
+
+# setting init
 switch_on = True
+pocket = 0
+sell_balance = {}
+
+# loading parameters
+resouces_available = resouces.resources
+menu_available = m.MENU
 
 while switch_on:
+    clear()
+
     # show options to user and cost to select
     print("Wellcome to WellExpress.")
-    print("Choose an option:")
+    print("These are the option:")
 
-    for item in m.MENU.keys():
-        print(f"{m.MENU[item]['id']}.{item.upper()}: Cost $: {m.MENU[item]['cost']} ({menu_status(m.MENU[item])}).")
-
-    choice = int(input("What do you wish? Type the code: "))
-
-    # report that bring the balance of resources
-    if choice == 99:
-        print("====== Report of resources available: ======")
-        for resource in resouces.resources:
-            print(f"{resource.upper()} : {resouces.resources[resource]}")
-        # TODO: insert breakdown here
+    for item in menu_available.keys():
+        if menu_available[item]["available"]:
+            print(
+                f"{menu_available[item]['id']}.{item.upper()}: Cost $: {menu_available[item]['cost']} ({menu_status(menu_available[item])}).")
 
     # process of collect the coins
     coins_inserted = {
@@ -52,23 +89,47 @@ while switch_on:
         "nickel": [],
         "pennies": []
     }
-    print("Please, insert the coins:")
 
-    for c in coins_inserted.keys():
-        coins_inserted[c] = int(input(f"How many {c}? "))
+    sell_process = True
+    while sell_process:
 
-    print(f"Amount of coins inserted: $ {coins_amount()}")
+        # process of choice and process an option
+        choice_id = int(input("What do you wish? Type the code: "))
 
-# TODO: create a function to check if the resources are enough to make the dring
+        choice_item = ''
+        choice_product_name = ''
+        for menu_item in menu_available:
+            if menu_available[menu_item]["id"] == choice_id:
+                choice_item = menu_available[menu_item]
+                choice_product_name = menu_item
 
-# TODO: add clear on loop
+        # report that bring the balance of resources
+        if choice_id == 99:
+            print("====== Report of resources available: ======")
+            for resource in resouces.resources:
+                print(f"{resource.upper()} : {resouces.resources[resource]}")
+            print(f"We have: $ {pocket} in your pocket")
+            print("====== Report end ======")
+            sell_process = False
+        elif choice_id == 100:
+            print("Switching off the Machine...")
+            sell_process = False
+            switch_on = False
+        else:
+            print("Please, insert the coins:")
+            for c in coins_inserted.keys():
+                coins_inserted[c] = int(input(f"How many {c}? "))
 
-# TODO: turn off the machine when code 'off'
+            print(f"Amount of coins inserted: $ {coins_amount()}")
 
-# TODO: create a function do deduce or increase resources
-
-# TODO: create a function to check if the coins are enough and give the change
-
-# TODO: create a money balance that is update by transaction proceeded
-
-# TODO: after a process, check if menu still available to select
+            if check_money_enough(choice_item, coins_amount()):
+                pocket += coins_amount()
+                print("I'm preparing your drink =).")
+                update_resource(choice_item)
+                update_menu_status()
+                check_change(coins_amount(), choice_item)
+                update_sell_balance(choice_product_name)
+                print("Get you drink!! Thank you")
+                sell_process = False
+            else:
+                print("The amount of coins is NOT enough. Please insert more.")
