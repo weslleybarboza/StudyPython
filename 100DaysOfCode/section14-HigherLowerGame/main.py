@@ -1,40 +1,42 @@
 from random import choice as random_choice
 from game_data import data
 import art
-import os
+from replit import clear
 
 list_used = []
-def newOption ():
-    '''
-    Return a random new option without repeat itens usaged.
-    '''
+
+
+def new_random_element():
+    """
+    Return a random new option without repeat item usage.
+    """
     list_option = []
     for i in data:
         list_option.append(i)
 
     list_available = [item for item in list_option if item not in list_used]
-    
+
     new_option = random_choice(list_available)
     list_used.append(new_option)
-    
+
     return new_option
 
-def result(a_option, b_option):
-    '''
+
+def result(a_position, b_position):
+    """
     Return granter option.
-    '''
-    if a_option['follower_count'] >= b_option['follower_count']:
+    """
+    if a_position['follower_count'] >= b_position['follower_count']:
         return 'a'
     else:
         return 'b'
 
-clear = lambda: os.system('clear')
 
 # random in list, show option A var a_option.
-a_option = newOption()
+a_option = new_random_element()
 
 # random in list, show B option var b_option. Can't be A.
-b_option = newOption()
+b_option = new_random_element()
 
 # loop start
 score = 0
@@ -58,19 +60,12 @@ while playing:
     if choice == outcome:
         score += 1
         if outcome == 'a':
-            b_option = newOption()
+            b_option = new_random_element()
         else:
             a_option = b_option
-            b_option = newOption()
+            b_option = new_random_element()
     else:
         clear()
         print(art.logo)
         print(f"Sorry, that's wrong. Final score: {score}")
         playing = False
-
-
-# print(list_used)
-
-# if user_option won, the var a_option receive winner(), the var b_option receive another random. The score gets 1 point. The game continue.
-
-# if user_option lose, the game ended, the final score is showed.
