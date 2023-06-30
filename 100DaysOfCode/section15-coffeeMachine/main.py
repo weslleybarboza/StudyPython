@@ -51,7 +51,7 @@ def update_menu_status():
 
 def check_change(amount_paid, choise):
     if choise["cost"] < amount_paid:
-        print(f"Please, get your change: $ {amount_paid - choise['cost']}")
+        print(f"Please, get your $ {amount_paid - choise['cost']} in change.")
 
 
 def update_sell_balance(product_name):
@@ -63,7 +63,7 @@ def update_sell_balance(product_name):
 
 # setting init
 switch_on = True
-pocket = 0
+profit = 0
 sell_balance = {}
 
 # loading parameters
@@ -108,7 +108,7 @@ while switch_on:
             print("====== Report of resources available: ======")
             for resource in resouces.resources:
                 print(f"{resource.upper()} : {resouces.resources[resource]}")
-            print(f"We have: $ {pocket} in your pocket")
+            print(f"We have: $ {profit} in your pocket")
             print("====== Report end ======")
             sell_process = False
         elif choice_id == 100:
@@ -123,7 +123,7 @@ while switch_on:
             print(f"Amount of coins inserted: $ {coins_amount()}")
 
             if check_money_enough(choice_item, coins_amount()):
-                pocket += coins_amount()
+                profit += coins_amount()
                 print("I'm preparing your drink =).")
                 update_resource(choice_item)
                 update_menu_status()
